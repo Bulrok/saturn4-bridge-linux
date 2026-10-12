@@ -1,0 +1,9 @@
+{
+  "name": "saturn4-bridge",
+  "version": "1.0.0",
+  "description": "Dependency-free SDCP v3 client for the ELEGOO Saturn 4 Ultra (discover, status, upload, print) on Bun",
+  "private": true,
+  "type": "commonjs",
+  "bin": { "saturn4": "./saturn4.js" },
+  "license": "GPL-3.0-or-later"
+}

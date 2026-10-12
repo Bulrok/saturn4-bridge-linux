@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Send to Saturn 4 Ultra
+Comment=Upload a sliced .goo/.ctb/.sl1 file to the ELEGOO Saturn 4 Ultra over the LAN (SDCP), optionally start printing
+Icon=printer
+Exec=saturn4-send-gui %f
+Terminal=false
+Categories=Graphics;3DGraphics;
+Keywords=elegoo;saturn;resin;msla;upload;print;goo;ctb;sdcp;

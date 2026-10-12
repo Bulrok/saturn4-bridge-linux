@@ -1,0 +1,38 @@
+#!/bin/bash
+# GUI front-end for `saturn4 send`: pick a sliced file (or take it from the command line / Nautilus),
+# convert .sl1 → .ctb with UVtools if needed (elephant-foot erode + wait-before-cure), upload to the
+# Saturn 4 Ultra, optionally start the print. Also installed as the Nautilus script "Send to Saturn 4 Ultra".
+export PATH="$HOME/.local/bin:$HOME/.bun/bin:$PATH"
+file="${1:-$NAUTILUS_SCRIPT_SELECTED_FILE_PATHS}"
+file="${file%%$'\n'*}"
+if [ -z "$file" ]; then
+  file=$(zenity --file-selection --title="Send to Saturn 4 Ultra" \
+    --file-filter="Sliced files (goo, ctb, sl1) | *.goo *.ctb *.sl1 *.GOO *.CTB *.SL1" --file-filter="All files | *") || exit 0
+fi
+[ -f "$file" ] || { zenity --error --text="Not a file: $file"; exit 1; }
+name=$(basename "$file")
+
+# One form: erode choice (only for .sl1, which is where the conversion happens) + what to do after upload.
+# Cancel / Escape / closing the window exits without doing anything.
+form=(zenity --forms --title="Send to Saturn 4 Ultra" --text="Send <b>$name</b> to the Saturn 4 Ultra" --separator=$'\t')
+sl1=0; case "${file,,}" in *.sl1|*.sl1s) sl1=1;; esac
+[ "$sl1" = 1 ] && form+=(--add-combo="Elephant foot" --combo-values="Erode (part on the plate)|No erode (part on supports)")
+form+=(--add-combo="After upload" --combo-values="Upload only|Upload and start print")
+answer=$("${form[@]}") || exit 0
+
+args=(send "$file")
+if [ "$sl1" = 1 ]; then
+  erode="${answer%%$'\t'*}"; answer="${answer#*$'\t'}"
+  case "$erode" in "No erode"*) args+=(--no-erode);; esac
+fi
+case "$answer" in "Upload and start"*) args+=(--start);; esac
+
+log=$(mktemp)
+( saturn4 "${args[@]}" 2>&1 | tee "$log" | sed -u -n 's/.*\r *\([0-9]*\)%.*/\1/p;s/^  \([0-9]*\)%$/\1/p' ) \
+  | zenity --progress --title="Send to Saturn 4 Ultra" --text="Uploading $name …" --auto-close --auto-kill --percentage=0 2>/dev/null
+if grep -qE '^(uploaded|print started)' "$log"; then
+  zenity --info --title="Saturn 4 Ultra" --text="$(grep -E '^(uploaded|print started)' "$log")"
+else
+  zenity --error --title="Saturn 4 Ultra" --text="$(tail -n 5 "$log")"
+fi
+rm -f "$log"

@@ -1,0 +1,10 @@
+{
+  "enabled": true,
+  "format": "ctb",
+  "bottomHeight": 0.5,
+  "bottom": { "secondsPer1000mm2": 10, "min": 15, "max": 45, "maxStep": 5 },
+  "normal": { "secondsPer1000mm2": 2,  "min": 1.5, "max": 8,  "maxStep": 1 },
+  "massFrom": "Maximum",
+  "massHeight": 0.3,
+  "emptyFirstLayer": true
+}
