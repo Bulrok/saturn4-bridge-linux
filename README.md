@@ -5,6 +5,8 @@ ChituManager / ELEGOO Satellite for file transfer and print control: no cloud, n
 It can also convert PrusaSlicer `.sl1` exports to the printer's `.ctb`/`.goo` formats via UVtools, applying an
 elephant-foot compensation and an area-proportional wait-before-cure on the way.
 
+![Terminal session: saturn4 discover finds the printer with firmware and SDCP version, status reports idle with UV LED temperature and film release count, files lists the sliced files on the printer](docs/saturn4-cli.svg)
+
 ## Requirements
 
 - **[Bun](https://bun.sh)** (the script uses Bun's built-in `WebSocket`, `fetch` and `FormData`; no `npm install` needed).
